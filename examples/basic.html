@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>basic | tag-editor examples</title>
+
+    <style>
+    </style>
+
+  </head>
+  <body>
+
+    <input id="tags" name="tags" type="text"/>
+
+    <script src="../dist/tag-editor.js"></script>
+    <script>
+
+      window.addEventListener('load', function() {
+        var tagsEl = document.querySelector('#tags'),
+            tagEditor = new TagEditor(tagsEl);
+      });
+
+    </script>
+  </body>
+</html>
