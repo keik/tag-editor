@@ -42,22 +42,30 @@ function TagEditor(inputEl, options) {
   this.styleEl = document.createElement('style')
   this.tagsContainerEl = document.createElement('ul')
 
+  let computed = window.getComputedStyle(this.inputEl)
   this.styleEl.textContent = `
 .${this.options.tagsContainerClass} {
+  display: flex;
+  align-items: center;
   position: absolute;
   top: ${this.inputEl.offsetTop}px;
   left: ${this.inputEl.offsetLeft}px;
+  height: ${this.inputEl.offsetHeight}px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 .${this.options.tagsContainerClass} > li {
-  display: inline-block;
+  display: flex;
+  align-items: center;
   margin-left: 4px;
+  height: ${computed.height};
+  font-size: ${computed.fontSize};
   background-color: lightblue;
   border-radius: 3px;
 }`
 
+  console.log(computed.height);
   this.tagsContainerEl.className = this.options.tagsContainerClass
 
   document.body.appendChild(this.tagsContainerEl)
