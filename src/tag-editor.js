@@ -58,11 +58,28 @@ function TagEditor(inputEl, options) {
 .${this.options.tagsContainerClass} > li {
   display: flex;
   align-items: center;
+  padding: 2px;
   margin-left: 4px;
-  height: ${computed.height};
+  height: ${parseInt(computed.fontSize, 0) + 8}px;
+  max-height: ${computed.height};
   font-size: ${computed.fontSize};
   background-color: lightblue;
   border-radius: 3px;
+  box-sizing: border-box;
+}
+.${this.options.tagsContainerClass} > li > button {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 0 2px;
+
+  font-size: ${computed.fontSize};
+  background-color: lightblue;
+  border: none;
+  cursor: pointer;
+}
+.${this.options.tagsContainerClass} > li > button:after {
+  content: '×';
 }`
 
   console.log(computed.height);
@@ -101,7 +118,6 @@ function _handleTagsStoreAdded(tag) {
   let tagEl = document.createElement('li'),
       removeBtnEl = document.createElement('button')
   tagEl.textContent = tag
-  removeBtnEl.textContent = '×'
   tagEl.appendChild(removeBtnEl)
   this.tagsContainerEl.appendChild(tagEl)
   _render.bind(this)()
