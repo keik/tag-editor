@@ -28,6 +28,7 @@ function TagEditor(inputEl, options) {
 
   this.options = objectAssign({
     // TODO define defaults
+    tagsContainerClass: 'te-tags-container'
   }, options)
 
   // TODO modular
@@ -38,8 +39,29 @@ function TagEditor(inputEl, options) {
    */
 
   this.inputEl = inputEl
+  this.styleEl = document.createElement('style')
   this.tagsContainerEl = document.createElement('ul')
+
+  this.styleEl.textContent = `
+.${this.options.tagsContainerClass} {
+  position: absolute;
+  top: ${this.inputEl.offsetTop}px;
+  left: ${this.inputEl.offsetLeft}px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.${this.options.tagsContainerClass} > li {
+  display: inline-block;
+  margin-left: 4px;
+  background-color: lightblue;
+  border-radius: 3px;
+}`
+
+  this.tagsContainerEl.className = this.options.tagsContainerClass
+
   document.body.appendChild(this.tagsContainerEl)
+  document.querySelector('head').appendChild(this.styleEl)
 
   /*
    * UI event handler
@@ -68,9 +90,13 @@ TagEditor.prototype.destroy = function() {
 
 function _handleTagsStoreAdded(tag) {
   d('#_handleTagsStoreAdded', tag)
-  let tagEl = document.createElement('li')
+  let tagEl = document.createElement('li'),
+      removeBtnEl = document.createElement('button')
   tagEl.textContent = tag
+  removeBtnEl.textContent = '×'
+  tagEl.appendChild(removeBtnEl)
   this.tagsContainerEl.appendChild(tagEl)
+  _render.bind(this)()
 }
 
 function _handleTagsStoreRemoved(tag) {
@@ -98,16 +124,21 @@ function _onInputKeyup(e) {
 
 function _taggify(value) {
   d('#_taggify')
-  value.split(/ +/).forEach(function(tag) {
-    // TODO dispatch action
-    this.tagsStore.push(tag)
-    _handleTagsStoreAdded.bind(this)(tag)
-  }.bind(this))
+  value.split(/ +/)
+    .filter(tag => tag !== '')
+    .forEach(tag => {
+      // TODO dispatch action
+      this.tagsStore.push(tag)
+      _handleTagsStoreAdded.bind(this)(tag)
+    })
 }
 
 function _render() {
   d('#_render')
   this.inputEl.value = this.state.value
+  let lastTagEl = this.tagsContainerEl.lastChild
+  if (lastTagEl)
+    this.inputEl.style.paddingLeft = lastTagEl.offsetLeft + lastTagEl.offsetWidth + 2 + 'px'
 }
 
 module.exports = TagEditor
