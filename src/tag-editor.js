@@ -13,6 +13,13 @@ let d = require('debug')('tag-editor')
 
 let objectAssign = require('object-assign')
 
+/*
+ * load modules
+ */
+
+let ActionDispatcher = require('./action-dispatcher')
+let TagsStore = require('./tags-store')
+
 /**
  * @constructor
  * @param {HTMLInputElement} inputEl
@@ -31,8 +38,8 @@ function TagEditor(inputEl, options) {
     tagsContainerClass: 'te-tags-container'
   }, options)
 
-  // TODO modular
-  this.tagsStore = []
+  this.action = ActionDispatcher.getInstance()
+  this.tagsStore = new TagsStore()
 
   /*
    * initialize DOM elements
@@ -82,7 +89,6 @@ function TagEditor(inputEl, options) {
   content: '×';
 }`
 
-  console.log(computed.height);
   this.tagsContainerEl.className = this.options.tagsContainerClass
 
   document.body.appendChild(this.tagsContainerEl)
@@ -92,13 +98,13 @@ function TagEditor(inputEl, options) {
    * UI event handler
    */
 
-  this.inputEl.addEventListener('keyup', _onInputKeyup.bind(this));
+  this.inputEl.addEventListener('keyup', _onInputKeyup.bind(this))
 
   /*
    * model event handler
    */
 
-  // this.tagsStore.on('add', _handleTagsStoreAdded.bind(this))
+  this.tagsStore.on('add', _handleTagsStoreAdd.bind(this))
 }
 
 /*
@@ -113,8 +119,8 @@ TagEditor.prototype.destroy = function() {
  * store event handlers
  */
 
-function _handleTagsStoreAdded(tag) {
-  d('#_handleTagsStoreAdded', tag)
+function _handleTagsStoreAdd(tag) {
+  d('#_handleTagsStoreAdd', tag)
   let tagEl = document.createElement('li'),
       removeBtnEl = document.createElement('button')
   tagEl.textContent = tag
@@ -151,9 +157,7 @@ function _taggify(value) {
   value.split(/ +/)
     .filter(tag => tag !== '')
     .forEach(tag => {
-      // TODO dispatch action
-      this.tagsStore.push(tag)
-      _handleTagsStoreAdded.bind(this)(tag)
+      this.action.add(tag)
     })
 }
 

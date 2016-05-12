@@ -11,18 +11,21 @@ let objectAssign = require('object-assign')
  */
 
 let EventEmitter = require('./event-emitter')
+let ActionDispatcher = require('./action-dispatcher')
 
 /**
  * @coustructor
  * @param {EventEmitter} dippatcher
  * @param {Array.<Object>} tags
  */
-function TagsStore(dispatcher, tags) {
+function TagsStore() {
   d('#TagsStore')
   EventEmitter.call(this)
-  this.dispatcher = dispatcher
-  this.tags = tags
-  this.dispatcher.on('reset', _resetTags.bind(this))
+
+  this.tags = []
+
+  let action = ActionDispatcher.getInstance()
+  action.on('add', _addTag.bind(this))
 }
 
 // extend
@@ -45,10 +48,10 @@ objectAssign(TagsStore.prototype, {
  * private methods
  */
 
-function _resetTags(tags) {
-  d('#_resetTags')
-  this.tags = tags
-  this.emit('reset', tags)
+function _addTag(tag) {
+  d('#_addTag')
+  this.tags.push(tag)
+  this.emit('add', tag)
 }
 
 module.exports = TagsStore
